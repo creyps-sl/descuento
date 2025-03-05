@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validación de Descuento</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #codigoDescuento {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Validación de Descuento</h2>
+    <p><strong>Código de Descuento:</strong></p>
+    <p id="codigoDescuento"></p>
+
+    <form id="descuentoForm">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" required>
+
+        <label for="celular">Celular:</label>
+        <input type="tel" id="celular" name="celular" required>
+
+        <label for="dni">Últimos 3 dígitos del DNI:</label>
+        <input type="text" id="dni" name="dni" maxlength="3" required>
+
+        <button type="button" onclick="enviarWhatsapp()">Enviar por WhatsApp</button>
+    </form>
+</div>
+
+<script>
+    function base64Decode(str) {
+        return decodeURIComponent(escape(atob(str)));
+    }
+
+    function getQueryParams() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('data') ? JSON.parse(base64Decode(params.get('data'))) : null;
+    }
+
+    window.onload = function() {
+        const data = getQueryParams();
+        if (!data) {
+            alert("Datos inválidos");
+            return;
+        }
+
+        document.getElementById('codigoDescuento').textContent = data.codigo;
+    };
+
+    function enviarWhatsapp() {
+        const data = getQueryParams();
+        if (!data) {
+            alert("Datos inválidos");
+            return;
+        }
+        
+        const fechaActual = new Date().toISOString().split('T')[0];
+        if (fechaActual < data.fechaDesde || fechaActual > data.fechaHasta) {
+            alert("El código de descuento ha expirado o aún no es válido.");
+            return;
+        }
+        
+        const nombre = document.getElementById('nombre').value;
+        const celular = document.getElementById('celular').value;
+        const dni = document.getElementById('dni').value;
+        
+        const mensaje = `Hola, solicito el descuento con código: ${data.codigo}. Mis datos son: Nombre: ${nombre}, Celular: ${celular}, DNI: ${dni}`;
+        const whatsappUrl = `https://wa.me/1137701972?text=${encodeURIComponent(mensaje)}`;
+        
+        window.location.href = whatsappUrl;
+    }
+</script>
+
+</body>
+</html>

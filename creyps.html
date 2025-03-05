@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de QR</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        img {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 300px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Generador QR para descuento</h2>
+    <form id="qrForm">
+        <label for="codigoDescuento">Código de Descuento:</label>
+        <input type="text" id="codigoDescuento" name="codigoDescuento" required> 
+
+        <label for="fechaDesde">Fecha Desde:</label>
+        <input type="date" id="fechaDesde" name="fechaDesde" required>
+
+        <label for="fechaHasta">Fecha Hasta:</label>
+        <input type="date" id="fechaHasta" name="fechaHasta" required>
+
+        <button type="button" onclick="generarQR()">Generar QR</button>
+    </form>
+
+    <div id="qrContainer">
+        <img id="qrCode" src="" alt="QR Code" style="display:none;">
+        <div id="generatedUrl"></div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+<script>
+    function base64Encode(str) {
+        return btoa(unescape(encodeURIComponent(str)));
+    }
+
+    function generarQR() {
+        const codigoDescuento = document.getElementById('codigoDescuento').value;
+        const fechaDesde = document.getElementById('fechaDesde').value;
+        const fechaHasta = document.getElementById('fechaHasta').value;
+
+        const data = JSON.stringify({ codigo: codigoDescuento, fechaDesde, fechaHasta });
+        const encodedData = base64Encode(data);
+
+        const baseUrl = 'https://came-sl.github.io/descuento/descuento.html';
+        const url = `${baseUrl}?data=${encodeURIComponent(encodedData)}`;
+        
+        document.getElementById('generatedUrl').textContent = `URL: ${url}`;
+
+        const qrCodeImg = document.getElementById('qrCode');
+        QRCode.toDataURL(url, { width: 300 }, function (err, url) {
+            if (err) throw err;
+            qrCodeImg.src = url;
+            qrCodeImg.style.display = 'block';
+        });
+    }
+</script>
+
+</body>
+</html>
