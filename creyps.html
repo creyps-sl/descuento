@@ -81,7 +81,7 @@
         const data = JSON.stringify({ codigo: codigoDescuento, fechaDesde, fechaHasta });
         const encodedData = base64Encode(data);
 
-        const baseUrl = 'https://came-sl.github.io/descuento/descuento.html';
+        const baseUrl = 'https://creyps-sl.github.io/descuento/';
         const url = `${baseUrl}?data=${encodeURIComponent(encodedData)}`;
         
         document.getElementById('generatedUrl').textContent = `URL: ${url}`;
